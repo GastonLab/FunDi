@@ -115,7 +115,7 @@ sub runCLIMode{
         @masked_sites = @{$ref};
     }
     
-    if($inalign =~ /\.fasta$/ || $inalign =~ /\.fst$/){
+    if($inalign =~ /\.fasta$/ || $inalign =~ /\.fst$/ || $inalign =~ /\.faa$/){
         print "Detected by file extension that $inalign is a FASTA formated file. Exporting Phylip\n";
         my %seq = Seq::readFasta($inalign);
         my $out = $inalign . ".phy";
