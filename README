@@ -48,8 +48,11 @@ The 9componentsDirichlet_* files are the Dirichlet mixture models file and must 
 FunDi can be executed with no arguments provided, which starts an interactive phylip-style menu-mode. Or
 it can be executed with input command line arguments. The -h option brings up a small help notice.
 
-It is recommended to use QmmRAxML only for the backing phylogenetic maximum-likelihood calculations. This is
+It is recommended to use QmmRAxML for the backing phylogenetic maximum-likelihood calculations. This is
 based on our publication (see below) as well as personal experience with additional datasets.
+
+FunDi by default works with phylip formatted alignment files. Some rudimentary checking (by file format extension) is
+done to detect and convert fasta alignments to phylip.
 
 
 The GAPDH example (chloroplast GapA versus cytosolic GapC) is provided. The command-line used to produce
