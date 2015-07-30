@@ -677,9 +677,14 @@ sub runMixtureModel{
         print "Internal branchlength is $branchlength\n";
         print LOG "Internal branchlength is $branchlength\n";
     }else{
-        print "More than one LCA?\n";
-        print "Currently only support use of two clusters in midroot or unrooted mode\n";
-        exit();
+        print "WARNING: Running on multiple clusters. This feature is currently experimental\n";
+        print LOG "WARNING: Running on multiple clusters. This feature is currently experimental\n";
+        foreach(@lcas){
+            my $temp_branch = $_ -> get_branchlength();
+            $branchlength = $branchlength + $temp_branch;
+        }
+        print "Combined Internal branchlengths of tree is $branchlength\n";
+        print LOG "Combined Internal branchlengths of tree is $branchlength\n";
     }
     
     my @sorted_out = sort @subfiles;
