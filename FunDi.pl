@@ -909,7 +909,7 @@ sub printHelp{
 HELP
 }
 
-#Optimization of the p paramter (mixture model weight) for each branchlength
+#Optimization of the p parameter (mixture model weight) for each branchlength
 sub optimizeRho{
     my ($method, $prior_max, $opt_p, $opt_b, $branch_ref, $subtree_ref, $lower, $upper, $step, $program) = @_;
     my @branch_files = @{$branch_ref};
