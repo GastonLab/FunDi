@@ -444,6 +444,7 @@ sub runMenuMode{
     runCLIMode(@_);
 }
 
+
 sub getSubtreesFile{
     my $file = shift;
 	open(IN, "$file") or die "Could not open $file\n";
@@ -664,18 +665,18 @@ sub runMixtureModel{
         }
     }
     
-    print "Retrieving branchlength information...\n";
+    print "Retrieving branch length information...\n";
     if(scalar(@lcas) == 2 && $midroot){
         foreach(@lcas){
             my $temp_branch = $_ -> get_branchlength();
             $branchlength = $branchlength + $temp_branch;
         }
-        print "Internal branchlength of midrooted tree is $branchlength\n";
-        print LOG "Internal branchlength of midrooted tree is $branchlength\n";
+        print "Internal branch length of midrooted tree is $branchlength\n";
+        print LOG "Internal branch length of midrooted tree is $branchlength\n";
     }elsif(scalar(@lcas) == 1){
         $branchlength = $lcas[0] -> get_branchlength();
-        print "Internal branchlength is $branchlength\n";
-        print LOG "Internal branchlength is $branchlength\n";
+        print "Internal branch length is $branchlength\n";
+        print LOG "Internal branch length is $branchlength\n";
     }else{
         print "More than one LCA?\n";
         print "Currently only support use of two clusters in midroot or unrooted mode\n";
@@ -825,8 +826,10 @@ sub runMixtureModel{
     my $bfh = $new_temp[-1];
     $bfh =~ s/[\n\r]+//g;
     $bfh =~ s/\.sitelh//;
+
+    my @mm_site_loglhs = @{$values[3]};
     
-    #Class posteriors tree file order: Wholetree then subtrees
+    #Class posteriors tree file order: Whole tree then subtrees
     my @site_likelihoods;
     my $rho = $new_values[0];
     my @class_posteriors;
@@ -841,12 +844,12 @@ sub runMixtureModel{
     
     #Calculate the posterior probability of functional divergence
     open(POST, ">FunDi_Posterior_Scores.txt") or die "Could not create FunDi_Posterior_Scores.txt\n\n";
-    print POST "Site\tP(FD)\n"; 
+    print POST "Site\tP(FD)\tMixture Model Site Log-Likelihood\tMixture Model Likelihood\tWhole Tree Likelihood\tWeighted Wholetree Likelihood\tSubtree Combined Likelihood\tSWeighted Subtree Likelihood\n";
     my $site = 0;
     my @sites;
     for(my $i = 0; $i < scalar(@site_likelihoods); $i++){
         if(scalar(@masked_sites) > 0 && $site == $masked_sites[0]){
-            print POST "$site\t NONE\n";
+            print POST "$site\tNONE\tNONE\n";
             shift @masked_sites;
             $site++;
             $i--;
@@ -855,12 +858,17 @@ sub runMixtureModel{
         my $nfd_numerator = ($rho) * exp($site_likelihoods[$i]);
         my $nfd_denominator = $nfd_numerator + ((1 - $rho) * ($subtree_site_probs[$i]));
         my $nfd_posterior = $nfd_numerator / $nfd_denominator;
+
         my $numerator = (1 - $rho) * ($subtree_site_probs[$i]);
         my $denominator = $numerator + ($rho) * exp($site_likelihoods[$i]);
         my $posterior = $numerator / $denominator;
+
         my $sum = $nfd_posterior + $posterior;
+
+        my $mm_prob = exp($mm_site_loglhs[$i]);
+        my $wholetree_prob = exp($subtree_site_probs[$i]);
         
-        print POST "$site\t $posterior\n";
+        print POST "$site\t$posterior\t$mm_site_loglhs[$i]\t$mm_prob\t$wholetree_prob\t$nfd_numerator\t$subtree_site_probs[$i]\t$numerator\n";
         
         if($posterior > 0.5){
             push @sites, $posterior;   
@@ -923,7 +931,7 @@ sub optimizeRho{
         $max = $prior_max;
     }
 
-    my @site_probs;
+    my @site_loglhs;
     foreach my $file_name (@branch_files){
         $file_name = "$file_name" . ".sitelh";
         print "Retrieving site likelihoods for $file_name...\n";
@@ -948,10 +956,10 @@ sub optimizeRho{
                 exit();
             }
             my $total = 0;
-            my @temp_site_probs;
+            my @temp_site_loglhs;
             for(my $i = 0; $i < scalar(@probs); $i++){
                 my $prob = ($p * $probs[$i]) + ((1 - $p) * $subtree_site_probs[$i]);
-                push @temp_site_probs, log($prob);
+                push @temp_site_loglhs, log($prob);
                 $total = $total + log($prob);
             }
             my @temp = split /-/, $file_name;
@@ -961,21 +969,21 @@ sub optimizeRho{
                 $opt_p = $p;
                 $opt_b = $file_name;
                 $max = $total;
-                @site_probs = @temp_site_probs;
+                @site_loglhs = @temp_site_loglhs;
             }elsif($max && $total < $max){
                 next();
             }else{
                 $opt_p = $p;
                 $opt_b = $file_name;
                 $max = $total;
-                @site_probs = @temp_site_probs;
+                @site_loglhs = @temp_site_loglhs;
             }
         }
     }
     push @values, $opt_p;
     push @values, $opt_b;
     push @values, $max;
-    #push @site_probs, \@site_probs;
+    push @values, \@site_loglhs;
     
     return @values;
 }
