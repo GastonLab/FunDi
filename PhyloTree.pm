@@ -439,10 +439,13 @@ sub get_lca{
 
     my $i = 0;
     while(!$lca){
-        my $last_id = "start";
+        my $last_id = -1;
         for(my $y = 0; $y < scalar(@ancestor_2d_rev); $y++){
-            my $id = $ancestor_2d_rev[$y][$i];
-            if($last_id eq "start"){
+            my $id = $last_id;
+            if (defined $ancestor_2d_rev[$y][$i]){
+                $id = $ancestor_2d_rev[$y][$i] -> get_node_id();
+            }
+            if($last_id == -1){
                 $last_id = $id;
             }else{
                 if($id != $last_id){
