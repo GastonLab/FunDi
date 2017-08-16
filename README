@@ -15,10 +15,8 @@ This code is copyrighted under the GNU General Public License Version 3.0
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-FunDi version 1.1. Any questions, comments, feedback, or bug reports
-should be directed to daniel.gaston@dal.ca or to andrew.roger@dal.ca
-
-Edited with Cloud9 IDE: Testing Github integration and pushing changes
+FunDi version 1.2. Any questions, comments, feedback, or bug reports
+should be directed to daniel.gaston@dal.ca
 
 ---------------------------------------------------------------------------------------------------------------
 INSTALLATION
@@ -34,6 +32,14 @@ Place the Perl modules (*.pm) files somewhere in your perl module path/library, 
 Place the FunDi.pl script somewhere in your path, or within the working directory 
 ----------------------------------------------------------------------------------------------------------------
 
+---------------------------------------------------------------------------------------------------------------
+FAQ and Problems
+---------------------------------------------------------------------------------------------------------------
+1. FunDi gives an error of sh: l: puzzle: not found or similar
+
+The instructions above assume you are using qmmRAxML to estimate the site-likelihoods. However, FunDi can use other programs such as RAxML,
+Tree-Puzzle, etc to estimate these sitelikelihoods. You must be sure that if you are using one of these alternative programs
+(a full list is available with the -h option) that the program is installed and executable from the system PATH.
 
 ---------------------------------------------------------------------------------------------------------------
 USE
