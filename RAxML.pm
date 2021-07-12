@@ -48,8 +48,8 @@ sub callRAxML{
 
 sub callParallelRAxML{
     my $string = shift;
-    print "Calling raxmlHPC-PTHREADS with the following: $string\n";
-    `raxmlHPC-PTHREADS $string`
+    print "Calling raxmlHPC-PTHREADS-SSE3 with the following: $string\n";
+    `raxmlHPC-PTHREADS-SSE3 $string`
 }
 
 sub getRAxMLSiteLH{
